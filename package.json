@@ -1,0 +1,34 @@
+{
+  "name": "authentication-jwt-nodejs-api-rest",
+  "version": "1.0.0",
+  "description": "backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:gamalielsaracho/authentication-jwt-nodejs-api-rest.git"
+  },
+  "author": "gamaliel saracho",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gamalielsaracho/authentication-jwt-nodejs-api-rest/issues"
+  },
+  "dependencies": {
+    "babel": "^5.8.23",
+    "body-parser": "^1.15.2",
+    "boom": "^4.2.0",
+    "chalk": "^1.1.3",
+    "cors": "^2.8.1",
+    "crypto": "0.0.3",
+    "express": "^4.14.0",
+    "jsonwebtoken": "^7.2.1",
+    "mongoose": "^4.7.4",
+    "nodemailer": "^2.7.0",
+    "randomstring": "^1.1.5"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
