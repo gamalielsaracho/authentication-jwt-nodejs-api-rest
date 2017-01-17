@@ -23,16 +23,23 @@ export default (req, res) => {
 			password: passwordEncrypted
 		})
 
-		const tokenData = {
-			id: user._id
-			email: user.email
-		}
+		user.save()
+		.then(() => {
+			const tokenData = {
+				id: user._id
+				email: user.email
+			}
 
-		const token = jwt.sign(tokenData, privateKey, { expiresIn: tokenExpiry })
+			const token = jwt.sign(tokenData, privateKey, { expiresIn: tokenExpiry })
 
-		Common.sentMailVerificationLink(user, token)
+			Common.sentMailVerificationLink(user, token)
 
-		return res.send(Boom.forbidden('Please confirm your email id by clicking on link in email'))
+			return res.send(Boom.forbidden('Please confirm your email id by clicking on link in email'))
+		})
+		.catch((err) => {
+			return res.send(Boom.forbidden(err))
+		})
+
 	})
 	.catch((err) => {
 		return res.send(Boom.forbidden(err))
