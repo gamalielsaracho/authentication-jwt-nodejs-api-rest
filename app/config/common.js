@@ -33,7 +33,7 @@ export default function sentMailVerificationLink(user, token) {
 		<p>Please verify your email by clicking on the verification link below.<br/>
 		<a href=${textLink.toString()}>Verification Link</a></p>
 	`
-	mail(from, user.username, 'Account Verification', mailbody)
+	mail(from, user.email, 'Account Verification', mailbody)
 }
 
 
@@ -41,9 +41,9 @@ export default function sentMailForgotPassword(user) {
 	let from = `${config.email.accountName} Team< ${config.email.username} >`
 	let mailbody = `
 		<p> you ${config.email.accountName} Account Credential</p>
-		<p>username: ${user.username} , password: ${decrypt(user.password)} </p>
+		<p>email: ${user.email} , password: ${decrypt(user.password)} </p>
 	`
-	mail(from, user.username, 'Account password', mailbody)
+	mail(from, user.email, 'Account password', mailbody)
 }
 
 function encrypt(password) {
