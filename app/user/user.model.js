@@ -4,7 +4,7 @@ import { db } from '../config/db'
 console.log(db)
 
 const UserSchema = new Schema({
-	username: {
+	email: {
 		type: String,
 		unique: true,
 		required: true 
