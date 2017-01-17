@@ -1,9 +1,10 @@
 import nodemailer from 'nodemailer'
 import config from './config'
 
-// BLOQUE algorithm.
+import crypto from 'crypto'
 const algorithm = 'aes-256-ctr'
 
+// BLOQUE privateKey.
 const privateKey = config.key.privateKey
 
 let smtpTransport = nodemailer.createTransport("SMTP", {
@@ -13,6 +14,14 @@ let smtpTransport = nodemailer.createTransport("SMTP", {
 		pass: config.email.password
 	}
 })
+
+export default (password) => {
+    return decrypt(password)
+}
+
+export default (password) => {
+    return encrypt(password)
+}
 
 // BLOQUE sentMailVerificationLink
 export default function sentMailVerificationLink(user, token) {
@@ -37,20 +46,27 @@ export default function sentMailForgotPassword(user) {
 	mail(from, user.username, 'Account password', mailbody)
 }
 
+function encrypt(password) {
+    let cipher = crypto.createCipher(algorithm, privateKey)
+    let crypted = cipher.update(password, 'utf8', 'hex')
+    crypted += cipher.final('hex')
+    return crypted
+}
+
+function decrypt(password) {
+    let decipher = crypto.createDecipher(algorithm, privateKey)
+    let dec = decipher.update(password, 'hex', 'utf8')
+    dec += decipher.final('utf8')
+    return dec
+}
 
 // BLOQUE mail
-
-// from => quien envia.
-// email => a quien vamos a enviar
-// subject => asunto o tema.
-// mailbody => todo el mensaje.
-
 function mail(from , email, subject, mailbody) {
 	let mailOptions = {
-        from: from, // dirección del remitente.
-        to: email, // el que va a recibir el email.
+        from: from, // Dirección del remitente.
+        to: email, // El que va a recibir el email.
         subject: subject, // Asunto del email.
-        html: mailbody  // contenido html
+        html: mailbody  // Contenido del mensaje en html.
     }
 
     smtpTransport.sendMail(mailOptions, (err, response) => {
