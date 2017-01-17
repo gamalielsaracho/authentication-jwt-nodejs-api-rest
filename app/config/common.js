@@ -14,7 +14,6 @@ let smtpTransport = nodemailer.createTransport("SMTP", {
 	}
 })
 
-console.log('seeeeee')
 // BLOQUE sentMailVerificationLink
 export default function sentMailVerificationLink(user, token) {
 	let textLink = `http://${config.server.host}:${config.server.port}/${config.email.verifyEmailUrl}/${token}`
