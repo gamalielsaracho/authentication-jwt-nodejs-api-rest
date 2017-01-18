@@ -1,5 +1,6 @@
-import UserController from './user.controller.js'
+import UserController from './user.controller'
 
 export default (app) => {
-	app.post('/register', UserController.register)
+	app.route('/user/register')
+	   .post(UserController.register)
 }
