@@ -9,7 +9,7 @@ import User from './user.model.js'
 const privateKey = Config.key.privateKey
 const tokenExpiry = Config.key.tokenExpiry
 
-export default (req, res) => {
+exports.register = (req, res) => {
 	const passwordEncrypted = Common.encrypt(req.body.password)
 
 	User.findOne({ email: req.body.email })
@@ -26,7 +26,7 @@ export default (req, res) => {
 		user.save()
 		.then(() => {
 			const tokenData = {
-				id: user._id
+				id: user._id,
 				email: user.email
 			}
 
