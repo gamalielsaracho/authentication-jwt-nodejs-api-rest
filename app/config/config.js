@@ -1,13 +1,13 @@
 export default {
 	server: {
 		host: 'localhost',
-		post: 3000
+		port: 3000
 	},
 	database: {
 		host: 'localhost',
 		post: 27017,
-		db: 'hola',
-		url: 'mongodb://127.0.0.1:27017/hola'
+		db: 'administration',
+		url: 'mongodb://127.0.0.1:27017/administration'
 	},
 	key: {
 		privateKey: 'mysupersecretkey',
