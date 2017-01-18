@@ -1,6 +1,5 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import logger from 'morgan'
 import config from './app/config/config'
 import db from './app/config/db'
 import routes from './app/routes'
@@ -10,7 +9,6 @@ const app = express()
 
 app.use(bodyParser.urlencoded({ extended:true }))
 app.use(bodyParser.json())
-app.use(logger('dev'))
 
 routes(app)
 
