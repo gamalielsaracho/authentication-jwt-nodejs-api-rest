@@ -1,16 +1,17 @@
 import Boom from 'boom'
-import Common from '../config/common'
 import Config from '../config/config'
 import jwt from 'jsonwebtoken'
 import User from './user.model.js'
+import crypto from '../config/crypto'
+import nodemailer from '../config/nodemailer'
 
 
-// BLOQUE privateKey
 const privateKey = Config.key.privateKey
 const tokenExpiry = Config.key.tokenExpiry
 
-exports.register = (req, res) => {
-	const passwordEncrypted = Common.encrypt(req.body.password)
+exports.register = function(req, res) {
+
+	const passwordEncrypted = crypto.encrypt(req.body.password)
 
 	User.findOne({ email: req.body.email })
 	.then((existingUser) => {
@@ -32,7 +33,7 @@ exports.register = (req, res) => {
 
 			const token = jwt.sign(tokenData, privateKey, { expiresIn: tokenExpiry })
 
-			Common.sentMailVerificationLink(user, token)
+			nodemailer.sentMailVerificationLink(user, token)
 
 			return res.send(Boom.forbidden('Please confirm your email id by clicking on link in email'))
 		})
@@ -45,3 +46,4 @@ exports.register = (req, res) => {
 		return res.send(Boom.forbidden(err))
 	})
 }
+
