@@ -16,6 +16,17 @@ const UserSchema = new Schema({
 	isVerified: {
 		type: Boolean,
 		default: false
+	},
+	role: {
+		type: String,
+		enum: ['Client', 'Manager', 'Admin'],
+		default:'Admin'
+	},
+	resetPasswordToken: {
+		type: String
+	},
+	resetPasswordExpires: {
+		type: String
 	}
 })
 
