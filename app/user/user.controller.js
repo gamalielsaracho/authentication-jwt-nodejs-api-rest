@@ -5,11 +5,10 @@ import User from './user.model.js'
 import crypto from '../config/crypto'
 import nodemailer from '../config/nodemailer'
 
-
 const privateKey = Config.key.privateKey
 const tokenExpiry = Config.key.tokenExpiry
 
-exports.register = function(req, res) {
+exports.register = (req, res) => {
 
 	const passwordEncrypted = crypto.encrypt(req.body.password)
 
@@ -46,4 +45,5 @@ exports.register = function(req, res) {
 		return res.send(Boom.forbidden(err))
 	})
 }
+
 
