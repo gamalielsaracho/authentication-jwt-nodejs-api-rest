@@ -1,6 +1,8 @@
 import nodemailer from 'nodemailer'
 import config from './config'
 
+import crypto from 'crypto'
+
 let smtpTransport = nodemailer.createTransport("SMTP", {
     service:'Gmail',
     auth: {
@@ -11,6 +13,8 @@ let smtpTransport = nodemailer.createTransport("SMTP", {
 
 export default {
     sentMailVerificationLink: (user, token) => {
+        console.log('El User es: '+user+' y el token: '+token)
+
         let textLink = `http://${config.server.host}:${config.server.port}/${config.email.verifyEmailUrl}/${token}`
 
         let from = `${config.email.accountName} Team< ${config.email.username} >`
@@ -25,7 +29,7 @@ export default {
         let from = `${config.email.accountName} Team< ${config.email.username} >`
         let mailbody = `
         <p> you ${config.email.accountName} Account Credential</p>
-        <p>email: ${user.email} , password: ${decrypt(user.password)} </p>`
+        <p>email: ${user.email} , password: ${crypto.decrypt(user.password)} </p>`
         mail(from, user.email, 'Account password', mailbody)
     }
 }

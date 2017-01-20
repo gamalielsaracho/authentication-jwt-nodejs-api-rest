@@ -14,7 +14,7 @@ export default {
 		tokenExpiry: '7d' 
 	},
 	email: {
-		username:'********@gmail.com',
+		username:'******@gmail.com',
 		password:'*******',
 		accountName: 'gmail',
 		verifyEmailUrl: 'verifyEmail'
