@@ -2,16 +2,23 @@ import Boom from 'boom'
 import Config from '../config/config'
 import jwt from 'jsonwebtoken'
 import User from './user.model.js'
-import crypto from '../config/crypto'
 import nodemailer from '../config/nodemailer'
 
 const privateKey = Config.key.privateKey
 const tokenExpiry = Config.key.tokenExpiry
 
+exports.users = (req, res, next) => {
+	User.find({})
+	.then(function(users) {
+		res.json(users)
+	})
+	.catch((err) => {
+		return next(err)
+	})
+}
+
 // 1.
 exports.register = (req, res) => {
-
-	const passwordEncrypted = crypto.encrypt(req.body.password)
 
 	User.findOne({ email: req.body.email })
 	.then((existingUser) => {
@@ -19,10 +26,10 @@ exports.register = (req, res) => {
 			return res.send(Boom.forbidden('please provide another user email'));
 		}
 
-		let user = new User({
-			email: req.body.email,
-			password: passwordEncrypted
-		})
+		let user = new User()
+
+		user.email = req.body.email
+		user.password = user.encryptPassword(req.body.password)
 
 		user.save()
 		.then(() => {
@@ -91,3 +98,4 @@ exports.verifyEmail = (req, res) => {
 		console.log(err)
 	})
 }
+
