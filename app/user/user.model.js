@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose'
 import { db } from '../config/db'
+import bcrypt from 'bcrypt-nodejs'
 
-console.log(db)
 
 const UserSchema = new Schema({
 	email: {
@@ -20,7 +20,7 @@ const UserSchema = new Schema({
 	role: {
 		type: String,
 		enum: ['Client', 'Manager', 'Admin'],
-		default:'Admin'
+		default:'Client'
 	},
 	resetPasswordToken: {
 		type: String
@@ -30,4 +30,17 @@ const UserSchema = new Schema({
 	}
 })
 
+
+UserSchema.methods.encryptPassword = (userPassword) => {
+	const hash = bcrypt.hashSync(userPassword)
+
+	return hash
+}
+
+UserSchema.methods.comparePassword = (userPassword) => {
+
+	return bcrypt.compareSync(userPassword, UserSchema.password)
+}
+
 export default mongoose.model('User', UserSchema)
+
