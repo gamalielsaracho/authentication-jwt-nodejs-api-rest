@@ -5,7 +5,7 @@ export default (app) => {
 	   .post(UserController.register)
 
 	app.route('/user/verifyEmail/:token')
-	   .post(UserController.verifyEmail)
+	   .get(UserController.verifyEmail)
 
 	app.route('/user/login')
 	   .post(UserController.login)
@@ -15,4 +15,7 @@ export default (app) => {
 
 	app.route('/user/forgotPassword')
 	   .post(UserController.forgotPassword)
+
+	app.route('/user/verifyToken/:resetPasswordToken')
+	   .get(UserController.verifyToken)
 }
