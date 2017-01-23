@@ -7,16 +7,6 @@ import nodemailer from '../config/nodemailer'
 const privateKey = Config.key.privateKey
 const tokenExpiry = Config.key.tokenExpiry
 
-exports.users = (req, res, next) => {
-	User.find({})
-	.then(function(users) {
-		res.json(users)
-	})
-	.catch((err) => {
-		return next(err)
-	})
-}
-
 // 1.
 exports.register = (req, res) => {
 
@@ -96,6 +86,31 @@ exports.verifyEmail = (req, res) => {
 	})
 	.catch((err) => {
 		console.log(err)
+	})
+}
+
+exports.login = (req, res) => {
+	User.findOne({ email: req.body.email })
+	.then((user) => {
+		if(user.comparePassword(req.body.password, user.password)) {
+			if(!user.isVerified) {
+				return res.send(Boom.forbidden('Your email address is not verified. please verify your email address to proceed'))
+			}
+
+			const tokenData = {
+				id: user._id,
+				email: user.email
+			}
+
+			const token = jwt.sign(tokenData, privateKey, tokenExpiry)
+
+			return res.json(token)
+		}else {
+			return res.send(Boom.forbidden('invalid username or password'))
+		}
+	})
+	.catch((err) => {
+		console.log('algo anda mal '+err)
 	})
 }
 
