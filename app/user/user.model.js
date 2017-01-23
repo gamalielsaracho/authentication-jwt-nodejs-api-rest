@@ -37,9 +37,9 @@ UserSchema.methods.encryptPassword = (userPassword) => {
 	return hash
 }
 
-UserSchema.methods.comparePassword = (userPassword) => {
+UserSchema.methods.comparePassword = (passwordIn, userPassword) => {
 
-	return bcrypt.compareSync(userPassword, UserSchema.password)
+	return bcrypt.compareSync(passwordIn, userPassword)
 }
 
 export default mongoose.model('User', UserSchema)
