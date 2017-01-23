@@ -111,7 +111,7 @@ exports.login = (req, res) => {
 		}
 	})
 	.catch((err) => {
-		console.log(err)
+		return res.send(Boom.badImplementation(err))
 	})
 }
 
