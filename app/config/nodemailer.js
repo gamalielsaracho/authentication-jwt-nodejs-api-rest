@@ -13,11 +13,9 @@ let smtpTransport = nodemailer.createTransport("SMTP", {
 
 export default {
     sentMailVerificationLink: (user, token) => {
-        console.log('El User es: '+user+' y el token: '+token)
-
         let textLink = `http://${config.server.host}:${config.server.port}/${config.email.verifyEmailUrl}/${token}`
-
         let from = `${config.email.accountName} Team< ${config.email.username} >`
+        
         let mailbody = `
             <p> Thanks for Registering on ${config.email.accountName} </p>
             <p>Please verify your email by clicking on the verification link below.</p><br/>
@@ -36,6 +34,15 @@ export default {
             <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
         `
         mail(from, user.email, 'Reset Password', mailbody)
+    },
+    sentMailPasswordChanged: (user) => {
+        let from = `${config.email.accountName} Team< ${config.email.username} >`
+
+        let mailbody = `
+            <p>You are receiving this email because you changed your password.</p>
+            <p>If you did not request this change, please contact us immediately.</p>
+        `
+        mail(from, user.email, 'Password Changed', mailbody)
     }
 }
 
