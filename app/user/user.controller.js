@@ -103,7 +103,7 @@ exports.login = (req, res) => {
 				email: user.email
 			}
 
-			const token = jwt.sign(tokenData, privateKey, tokenExpiry)
+			const token = jwt.sign(tokenData, privateKey, { expiresIn:tokenExpiry })
 
 			return res.json(token)
 		}else {
@@ -125,11 +125,10 @@ exports.resendVerificationEmail = (req, res) => {
 
 			const tokenData = {
 				id: user._id,
-				email: user.email,
-				role: user.role
+				email: user.email
 			}
 
-			const token = jwt.sign(tokenData, privateKey, tokenExpiry)
+			const token = jwt.sign(tokenData, privateKey, { expiresIn:tokenExpiry })
 
 			nodemailer.sentMailVerificationLink(user, token)
 
