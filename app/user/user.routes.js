@@ -12,4 +12,7 @@ export default (app) => {
 
 	app.route('/user/resendVerificationEmail')
 	   .post(UserController.resendVerificationEmail)
+
+	app.route('/user/forgotPassword')
+	   .post(UserController.forgotPassword)
 }
