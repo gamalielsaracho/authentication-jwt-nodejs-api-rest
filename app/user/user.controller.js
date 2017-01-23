@@ -3,6 +3,7 @@ import Config from '../config/config'
 import jwt from 'jsonwebtoken'
 import User from './user.model.js'
 import nodemailer from '../config/nodemailer'
+import crypto from 'crypto'
 
 const privateKey = Config.key.privateKey
 const tokenExpiry = Config.key.tokenExpiry
@@ -89,7 +90,7 @@ exports.verifyEmail = (req, res) => {
 	})
 }
 
-// 3
+// 3.
 exports.login = (req, res) => {
 	User.findOne({ email: req.body.email })
 	.then((user) => {
@@ -115,6 +116,7 @@ exports.login = (req, res) => {
 	})
 }
 
+// 4.
 exports.resendVerificationEmail = (req, res) => {
 	User.findOne({ email:req.body.email })
 	.then((user) => {
@@ -139,5 +141,41 @@ exports.resendVerificationEmail = (req, res) => {
 	})
 	.catch((err) => {
 		return res.send(Boom.badImplementation(err))
+	})
+}
+
+exports.forgotPassword = (req, res, next) => {
+	const email = req.body.email
+
+	User.findOne({ email: email })
+	.then((user) => {
+		if(user == null) {
+			res.status(422).json({ error: 'Your request could not be processed as entered. Please try again.' })
+		}
+
+		crypto.randomBytes(48, (err, buffer) => {
+			if(err) {
+				return next(err)
+			}
+
+			const resetToken = buffer.toString('hex')
+			user.resetPasswordToken = resetToken
+			user.resetPasswordExpires = Date.now() + 3600000
+
+			user.save()
+			.then(() => {
+				nodemailer.sentMailForgotPassword(user)
+
+				res.status(200).json({ message:'Please check your email for the link to reset your password.' })
+				next()
+			})
+			.catch((err) => {
+				return next(err)
+			})
+		})
+
+	})
+	.catch((err) => {
+		return next(err)
 	})
 }
