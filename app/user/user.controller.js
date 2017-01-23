@@ -114,3 +114,31 @@ exports.login = (req, res) => {
 		console.log(err)
 	})
 }
+
+exports.resendVerificationEmail = (req, res) => {
+	User.findOne({ email:req.body.email })
+	.then((user) => {
+		if(user.comparePassword(req.body.password, user.password)) {
+			if(user.isVerified) {
+				return res.send(Boom.forbidden('your email address is already verified'))
+			}
+
+			const tokenData = {
+				id: user._id,
+				email: user.email,
+				role: user.role
+			}
+
+			const token = jwt.sign(tokenData, privateKey, tokenExpiry)
+
+			nodemailer.sentMailVerificationLink(user, token)
+
+			return res.send(Boom.forbidden('account verification link is sucessfully send to an email id'))
+		}else {
+			return res.send(Boom.forbidden('invalid email or password'))
+		}
+	})
+	.catch((err) => {
+		return res.send(Boom.badImplementation(err))
+	})
+}
