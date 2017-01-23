@@ -10,4 +10,6 @@ export default (app) => {
 	app.route('/user/login')
 	   .post(UserController.login)
 
+	app.route('/user/resendVerificationEmail')
+	   .post(UserController.resendVerificationEmail)
 }
