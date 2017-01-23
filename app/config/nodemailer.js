@@ -20,17 +20,22 @@ export default {
         let from = `${config.email.accountName} Team< ${config.email.username} >`
         let mailbody = `
             <p> Thanks for Registering on ${config.email.accountName} </p>
-            <p>Please verify your email by clicking on the verification link below.<br/>
-            <a href=${textLink.toString()}>Verification Link</a></p>
+            <p>Please verify your email by clicking on the verification link below.</p><br/>
+            <a href='${textLink.toString()}'>Verification Link</a>
         `
         mail(from, user.email, 'Account Verification', mailbody)
     },
     sentMailForgotPassword: (user) => {
+        let textLink = 'http://${config.server.host}/reset-password/${user.resetPasswordToken}'
         let from = `${config.email.accountName} Team< ${config.email.username} >`
+        
         let mailbody = `
-        <p> you ${config.email.accountName} Account Credential</p>
-        <p>email: ${user.email} , password: ${crypto.decrypt(user.password)} </p>`
-        mail(from, user.email, 'Account password', mailbody)
+            <p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p></br>
+            Please click on the following link, or paste this into your browser to complete the process:</p></br>
+            <a href='${textLink.toString()}'>Verification Link</a></br>
+            <p>If you did not request this, please ignore this email and your password will remain unchanged.</p>
+        `
+        mail(from, user.email, 'Reset Password', mailbody)
     }
 }
 
