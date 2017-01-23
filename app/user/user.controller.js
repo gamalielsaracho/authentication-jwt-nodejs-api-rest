@@ -144,6 +144,7 @@ exports.resendVerificationEmail = (req, res) => {
 	})
 }
 
+// 5.
 exports.forgotPassword = (req, res, next) => {
 	const email = req.body.email
 
@@ -174,6 +175,34 @@ exports.forgotPassword = (req, res, next) => {
 			})
 		})
 
+	})
+	.catch((err) => {
+		return next(err)
+	})
+}
+
+exports.verifyToken = (req, res, next) => {
+	User.findOne({ resetPasswordToken: req.params.resetPasswordToken, resetPasswordExpires: Date.now() })
+	.then((user) => {
+		if(!user) {
+			res.status(422).json({ error: 'Your token has expired. Please attempt to reset your password again.' })
+		}
+
+		user.password = req.body.password
+		user.resetPasswordToken = undefined
+		user.resetPasswordExpires = undefined
+
+		user.save()
+		.then(() => {
+			nodemailer.sentMailPasswordChanged(user)
+
+			res.status(200).json({ message: 'Password changed successfully. Please login with your new password.' })
+			
+			next()
+		})
+		.catch((err) => {
+			return next(err)
+		})
 	})
 	.catch((err) => {
 		return next(err)
