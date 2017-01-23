@@ -89,6 +89,7 @@ exports.verifyEmail = (req, res) => {
 	})
 }
 
+// 3
 exports.login = (req, res) => {
 	User.findOne({ email: req.body.email })
 	.then((user) => {
@@ -110,7 +111,6 @@ exports.login = (req, res) => {
 		}
 	})
 	.catch((err) => {
-		console.log('algo anda mal '+err)
+		console.log(err)
 	})
 }
-
