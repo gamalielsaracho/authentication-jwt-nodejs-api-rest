@@ -181,6 +181,7 @@ exports.forgotPassword = (req, res, next) => {
 	})
 }
 
+// 6.
 exports.verifyToken = (req, res, next) => {
 	User.findOne({ resetPasswordToken: req.params.resetPasswordToken, resetPasswordExpires: Date.now() })
 	.then((user) => {
@@ -207,4 +208,32 @@ exports.verifyToken = (req, res, next) => {
 	.catch((err) => {
 		return next(err)
 	})
+}
+
+// 7.
+exports.roleAuthorization = (role) => {
+	return (req, res, next) => {
+		const token = req.body.token || req.query.token || req.headers['x-access-token']
+		
+		if(token) {
+			jwt.verify(token, privateKey)
+			.then((decoded) => {
+				if(decoded.exp <= Date.now()) {
+					res.status(401).json({ error: 'Token Expired' })
+				}else {
+					if(decoded.role == role) {
+						return next()
+					}else {
+						res.status(401).json({ error: 'You are not authorized to view this content.' })
+					}
+				}
+			})
+			.catch((err) => {
+				return next(err)
+			})
+		}else {
+			res.status(401).json({ error: 'You should sign in' })
+		}
+		
+	}
 }
