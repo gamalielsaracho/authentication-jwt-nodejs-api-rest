@@ -1,4 +1,3 @@
-import Boom from 'boom'
 import Config from '../config/config'
 import jwt from 'jsonwebtoken'
 import User from './user.model.js'
