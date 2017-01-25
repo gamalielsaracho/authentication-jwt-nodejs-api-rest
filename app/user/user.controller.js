@@ -101,12 +101,23 @@ exports.verifyEmail = (req, res, next) => {
 }
 
 // 3.
-exports.login = (req, res) => {
-	User.findOne({ email: req.body.email })
+exports.login = (req, res, next) => {
+	const email = req.body.email
+	const password = req.body.password
+
+	if(!email) {
+		res.status(422).json({ error: 'You must enter an email address.' })
+	}
+
+	if(!password) {
+		res.status(422).json({ error: 'You must enter a password.' })
+	}
+
+	User.findOne({ email: email })
 	.then((user) => {
-		if(user.comparePassword(req.body.password, user.password)) {
+		if(user.comparePassword(password, user.password)) {
 			if(!user.isVerified) {
-				return res.send(Boom.forbidden('Your email address is not verified. please verify your email address to proceed'))
+				res.status(200).json({ message: 'Your email address is not verified. please verify your email address to proceed' })
 			}
 
 			const tokenData = {
@@ -116,13 +127,13 @@ exports.login = (req, res) => {
 
 			const token = jwt.sign(tokenData, privateKey, { expiresIn:tokenExpiry })
 
-			return res.json(token)
+			res.status(200).json(token)
 		}else {
-			return res.send(Boom.forbidden('invalid username or password'))
+			res.status(422).json({ error: 'invalid username or password' })
 		}
 	})
 	.catch((err) => {
-		return res.send(Boom.badImplementation(err))
+		return next(err)
 	})
 }
 
