@@ -56,47 +56,47 @@ exports.register = (req, res, next) => {
 }
 
 // 2.
-exports.verifyEmail = (req, res) => {
+exports.verifyEmail = (req, res, next) => {
 
 	const token = req.params.token
 
 	jwt.verify(token, privateKey)
 	.then((decoded) => {
 		if(decoded == undefined) {
-			return res.send(Boom.forbidden('invalid verification link'))
+			res.status(422).json({ error: 'invalid verification link' })
 		}
 
 		if(decoded.scope[0] != 'Customer') {
-			return res.send(Boom.forbidden('invalid verification link'))
+			res.status(422).json({ error: 'invalid verification link' })
 		}
 
 		User.findOne({ _id:decoded._id, email:decoded.email })
 		.then((user) => {
 			if(user == null) {
-				return res.send(Boom.forbidden('invalid verification link'))
+				res.status(422).json({ error: 'invalid verification link' })
 			}
 
 			if(user.isVerified == true) {
-				return res.send(Boom.forbidden('account is already verified'))
+				res.status(201).json({ error:'account is already verified' })
 			}
 
 			user.isVerified = true
 
 			user.save()
 			.then(() => {
-				return res.send(Boom.forbidden('account sucessfully verified'))
+				res.status(200).json({ error:'account sucessfully verified' })
 			})
 			.catch((err) => {
-				return res.send(Boom.badImplementation(err))
+				return next(err)
 			})
 
 		})
 		.catch((err) => {
-			return res.send(Boom.badImplementation(err))
+			return next(err)
 		})
 	})
 	.catch((err) => {
-		console.log(err)
+		return next(err)
 	})
 }
 
