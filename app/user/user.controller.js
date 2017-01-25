@@ -9,12 +9,22 @@ const privateKey = Config.key.privateKey
 const tokenExpiry = Config.key.tokenExpiry
 
 // 1.
-exports.register = (req, res) => {
+exports.register = (req, res, next) => {
+	const email = req.body.email
+	const password = req.body.password
 
-	User.findOne({ email: req.body.email })
+	if(!email) {
+		res.status(422).json({ error: 'You must enter an email address.' })
+	}
+
+	if(!password) {
+		res.status(422).json({ error: 'You must enter a password.' })
+	}
+
+	User.findOne({ email: email })
 	.then((existingUser) => {
 		if(existingUser) {
-			return res.send(Boom.forbidden('please provide another user email'));
+			res.status(422).json({ error: 'please provide another user email' })
 		}
 
 		let user = new User()
@@ -33,15 +43,15 @@ exports.register = (req, res) => {
 
 			nodemailer.sentMailVerificationLink(user, token)
 
-			return res.send(Boom.forbidden('Please confirm your email id by clicking on link in email'))
+			res.status(201).json({ message: 'Please confirm your email id by clicking on link in email' })
 		})
 		.catch((err) => {
-			return res.send(Boom.forbidden(err))
+			return next(err)
 		})
 
 	})
 	.catch((err) => {
-		return res.send(Boom.forbidden(err))
+		return next(err)
 	})
 }
 
