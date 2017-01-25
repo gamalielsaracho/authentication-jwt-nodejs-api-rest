@@ -117,7 +117,7 @@ exports.login = (req, res, next) => {
 	.then((user) => {
 		if(user.comparePassword(password, user.password)) {
 			if(!user.isVerified) {
-				res.status(200).json({ message: 'Your email address is not verified. please verify your email address to proceed' })
+				res.status(201).json({ message: 'Your email address is not verified. please verify your email address to proceed' })
 			}
 
 			const tokenData = {
@@ -138,12 +138,23 @@ exports.login = (req, res, next) => {
 }
 
 // 4.
-exports.resendVerificationEmail = (req, res) => {
-	User.findOne({ email:req.body.email })
+exports.resendVerificationEmail = (req, res, next) => {
+	const email = req.body.email
+	const password = req.body.password
+
+	if(!email) {
+		res.status(422).json({ error: 'You must enter an email address.' })
+	}
+
+	if(!password) {
+		res.status(422).json({ error: 'Yout must enter a password.' })
+	}
+
+	User.findOne({ email:email })
 	.then((user) => {
-		if(user.comparePassword(req.body.password, user.password)) {
+		if(user.comparePassword(password, user.password)) {
 			if(user.isVerified) {
-				return res.send(Boom.forbidden('your email address is already verified'))
+				res.status(201).json({ error: 'your email address is already verified' })
 			}
 
 			const tokenData = {
@@ -155,13 +166,13 @@ exports.resendVerificationEmail = (req, res) => {
 
 			nodemailer.sentMailVerificationLink(user, token)
 
-			return res.send(Boom.forbidden('account verification link is sucessfully send to an email id'))
+			res.status(200).json({ message: 'account verification link is sucessfully send to an email id' })
 		}else {
-			return res.send(Boom.forbidden('invalid email or password'))
+			res.status(422).json({ error: 'invalid email or password' })
 		}
 	})
 	.catch((err) => {
-		return res.send(Boom.badImplementation(err))
+		return next(err)
 	})
 }
 
